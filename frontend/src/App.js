@@ -1,6 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
-import Post from './components/card';
+import NewPostDialog from './components/new-post-popup';
+// import Post from './components/card';
 
 function App() {
   const postObjs = [
@@ -23,9 +24,13 @@ function App() {
         Header goes here
       </header>
       <section>
-        {postObjs.map((postObj) => (
-          <Post key={postObj.id} postObj={postObj} />
-        ))}
+        {/* Add a button that opens a popup that lets a user create a new post */}
+        <NewPostDialog></NewPostDialog>
+      </section>
+      <section>
+        {/* {postObjs.map((postObj) => (
+          <PostCard key={postObj.id} postObj={postObj} />
+        ))} */}
       </section>
       <footer>
         Made by Fil, Hank, & John
