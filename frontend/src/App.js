@@ -1,11 +1,11 @@
 import { CssBaseline, Toolbar, Typography } from '@mui/material';
 import React from 'react';
 import './App.css';
+import NewPostDialog from './components/new-post-popup';
 import CardPost from './components/cardpost';
-import {Box,Container,useScrollTrigger,Fade,AppBar} from '@mui/material';
+import { Box, Container, useScrollTrigger, Fade, AppBar } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-
 import Fab from '@mui/material/Fab';
 
 const darkTheme = createTheme({
@@ -57,7 +57,7 @@ function App(props) {
       title: 'Post 1',
       content: 'Post 1 content',
       location: 'Edmonton',
-      imageUrl: 
+      imageUrl:
         'https://picsum.photos/200/300',
       likes: 0,
     },
@@ -66,24 +66,26 @@ function App(props) {
 
   return (
     <React.Fragment>
-      <CssBaseline/>
+      <CssBaseline />
       <ThemeProvider theme={darkTheme}>
-      <AppBar>
-        <Toolbar>
-          <Typography variant="h6" component="div"> APP NAME </Typography>
-        </Toolbar>
-      </AppBar>
-      <Toolbar id='#back-to-top-anchor'/>
-      <Container>
-      {postObjs.map((postObj) => (
-                <CardPost key={postObj.id} postObj={postObj} />
-      ))}
-      </Container>
-      <ScrollTop {...props}>
-        <Fab size="small" aria-label="scroll back to top">
-          <KeyboardArrowUpIcon />
-        </Fab>
-      </ScrollTop>
+        <AppBar>
+          <Toolbar>
+            <Typography variant="h6" component="div"> APP NAME </Typography>
+          </Toolbar>
+        </AppBar>
+        <Toolbar id='#back-to-top-anchor' />
+        {/* Add a button that opens a popup that lets a user create a new post */}
+        <NewPostDialog></NewPostDialog>
+        <Container>
+          {postObjs.map((postObj) => (
+            <CardPost key={postObj.id} postObj={postObj} />
+          ))}
+        </Container>
+        <ScrollTop {...props}>
+          <Fab size="small" aria-label="scroll back to top">
+            <KeyboardArrowUpIcon />
+          </Fab>
+        </ScrollTop>
       </ThemeProvider>
     </React.Fragment>
 
