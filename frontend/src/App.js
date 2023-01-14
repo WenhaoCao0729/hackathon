@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 import './App.css';
-import Post from './components/card';
+import Post from './components/cardpost';
 
 function App() {
   const postObjs = [

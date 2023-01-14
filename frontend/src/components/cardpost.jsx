@@ -6,7 +6,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-const Card = () =>{
+const CardPost = () =>{
     return (
         <Card sx={{ maxWidth: 345 }}>
           <CardMedia
