@@ -1,10 +1,11 @@
 
 # Create your views here.
 
-from rest_framework import viewsets
+from rest_framework import viewsets,status
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 import uuid
+from rest_framework.response import Response
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -17,7 +18,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         post.save()
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
