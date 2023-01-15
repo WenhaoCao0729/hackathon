@@ -1,15 +1,35 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import {
-  Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   IconButton, ImageList, ImageListItem, ImageListItemBar, InputAdornment, Stack, TextField
 } from '@mui/material';
 import { Add, Delete, Send, PhotoCamera, LocationOn } from '@mui/icons-material';
 
 
+const MAX_FIELD_LENGTH = 64;
+
 const NewPostDialog = (props) => {
   const [open, setOpen] = React.useState(false);
-  const [imageName, setImageName] = React.useState(null);
-  const [imageUrl, setImageUrl] = React.useState(null);
+  const [postTitle, setPostTitle] = React.useState('');
+  const [postLocation, setPostLocation] = React.useState('');
+  const [postDesc, setPostDesc] = React.useState('');
+  const [imageName, setImageName] = React.useState('');
+  const [imageUrl, setImageUrl] = React.useState('');
+  const [isFormValid, setIsFormValid] = React.useState(false);
+
+  // Create a a new state var that is true if all fields are valid
+  // Triggered when any of the fields change
+  useEffect(() => {
+    setIsFormValid(postTitle && postLocation && postDesc && imageUrl);
+  }, [postTitle, postLocation, postDesc, imageUrl]);
+
+  const validateField = (value, successCallback, maxFieldLength = MAX_FIELD_LENGTH) => {
+    if (value.length > maxFieldLength) {
+      return;
+    }
+
+    successCallback(value);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -20,8 +40,22 @@ const NewPostDialog = (props) => {
   };
 
   const handleSubmit = () => {
-    handleClose();
-    // TODO: Call endpoint to add post to database
+    if (isFormValid) {
+      handleClose();
+      // TODO: Call endpoint to add post to database
+    }
+  };
+
+  const handleTitleChange = (event) => {
+    validateField(event.target.value, setPostTitle);
+  };
+
+  const handleLocationChange = (event) => {
+    validateField(event.target.value, setPostLocation);
+  };
+
+  const handleDescChange = (event) => {
+    validateField(event.target.value, setPostDesc, 256);
   };
 
   const handleImageUpload = (event) => {
@@ -60,19 +94,15 @@ const NewPostDialog = (props) => {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <Stack spacing={3}>
-              <div></div>
-              {/* <TextField id="outlined-basic" label="Username" variant="outlined" /> */}
-              <TextField id="outlined-basic" label="Title" variant="outlined" />
-              <TextField id="outlined-basic" label="Location" variant="outlined" InputProps={{
+              <TextField id="post-title-field" label="Title" variant="outlined" margin="dense" value={postTitle} onChange={handleTitleChange} error={!postTitle} />
+              <TextField id="post-location-field" label="Location" variant="outlined" value={postLocation} onChange={handleLocationChange} error={!postLocation} InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <LocationOn />
                   </InputAdornment>
                 ),
               }} />
-              <TextField id="outlined-basic" label="Description" variant="outlined" multiline rows={4} />
-
-              {/* TODO: Add component that lets How to upload images here */}
+              <TextField id="post-desc-field" label="Description" variant="outlined" multiline rows={4} value={postDesc} onChange={handleDescChange} error={!postDesc} />
               <Button variant="contained" component="label" startIcon={<PhotoCamera />}>
                 Upload Image
                 <input hidden accept="image/*" type="file" onChange={handleImageUpload} />
@@ -96,10 +126,11 @@ const NewPostDialog = (props) => {
           <Button onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} startIcon={<Send />} autoFocus>
+          <Button onClick={handleSubmit} startIcon={<Send />} autoFocus disabled={!isFormValid}>
             Post
           </Button>
         </DialogActions>
+        {!isFormValid && <Alert severity="error">Oof! All fields are required</Alert>}
       </Dialog>
     </div>
   );
