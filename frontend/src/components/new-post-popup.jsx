@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import {
   Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   IconButton, ImageList, ImageListItem, ImageListItemBar, InputAdornment, Stack, TextField
@@ -15,6 +15,13 @@ const NewPostDialog = (props) => {
   const [postDesc, setPostDesc] = React.useState('');
   const [imageName, setImageName] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
+  const [isFormValid, setIsFormValid] = React.useState(false);
+
+  // Create a a new state var that is true if all fields are valid
+  // Triggered when any of the fields change
+  useEffect(() => {
+    setIsFormValid(postTitle && postLocation && postDesc && imageUrl);
+  }, [postTitle, postLocation, postDesc, imageUrl]);
 
   const validateField = (value, successCallback, maxFieldLength = MAX_FIELD_LENGTH) => {
     if (value.length > maxFieldLength) {
@@ -33,8 +40,7 @@ const NewPostDialog = (props) => {
   };
 
   const handleSubmit = () => {
-    // TODO: Check if image has been uploaded here. This line exists in other places too
-    if (postTitle && postLocation && postDesc && imageUrl) {
+    if (isFormValid) {
       handleClose();
       // TODO: Call endpoint to add post to database
     }
@@ -47,7 +53,6 @@ const NewPostDialog = (props) => {
   const handleLocationChange = (event) => {
     validateField(event.target.value, setPostLocation);
   };
-
 
   const handleDescChange = (event) => {
     validateField(event.target.value, setPostDesc, 256);
@@ -121,11 +126,11 @@ const NewPostDialog = (props) => {
           <Button onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} startIcon={<Send />} autoFocus disabled={!(postTitle && postLocation && postDesc && imageUrl)}>
+          <Button onClick={handleSubmit} startIcon={<Send />} autoFocus disabled={!isFormValid}>
             Post
           </Button>
         </DialogActions>
-        {!(postTitle && postLocation && postDesc && imageUrl) && <Alert severity="error">Oof! All fields are required</Alert>}
+        {!isFormValid && <Alert severity="error">Oof! All fields are required</Alert>}
       </Dialog>
     </div>
   );
