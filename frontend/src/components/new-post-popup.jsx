@@ -13,8 +13,8 @@ const NewPostDialog = (props) => {
   const [postTitle, setPostTitle] = React.useState('');
   const [postLocation, setPostLocation] = React.useState('');
   const [postDesc, setPostDesc] = React.useState('');
-  const [imageName, setImageName] = React.useState(null);
-  const [imageUrl, setImageUrl] = React.useState(null);
+  const [imageName, setImageName] = React.useState('');
+  const [imageUrl, setImageUrl] = React.useState('');
 
   const validateField = (value, successCallback, maxFieldLength = MAX_FIELD_LENGTH) => {
     if (value.length > maxFieldLength) {
@@ -34,7 +34,7 @@ const NewPostDialog = (props) => {
 
   const handleSubmit = () => {
     // TODO: Check if image has been uploaded here. This line exists in other places too
-    if (postTitle && postLocation && postDesc) {
+    if (postTitle && postLocation && postDesc && imageUrl) {
       handleClose();
       // TODO: Call endpoint to add post to database
     }
@@ -121,11 +121,11 @@ const NewPostDialog = (props) => {
           <Button onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} startIcon={<Send />} autoFocus disabled={!(postTitle && postLocation && postDesc)}>
+          <Button onClick={handleSubmit} startIcon={<Send />} autoFocus disabled={!(postTitle && postLocation && postDesc && imageUrl)}>
             Post
           </Button>
         </DialogActions>
-        {!(postTitle && postLocation && postDesc) && <Alert severity="error">Oof! All fields are required</Alert>}
+        {!(postTitle && postLocation && postDesc && imageUrl) && <Alert severity="error">Oof! All fields are required</Alert>}
       </Dialog>
     </div>
   );
