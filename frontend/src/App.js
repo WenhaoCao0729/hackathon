@@ -1,5 +1,5 @@
 import { CssBaseline, Toolbar, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import NewPostDialog from './components/new-post-popup';
 import CardPost from './components/cardpost';
@@ -8,6 +8,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Fab from '@mui/material/Fab';
 
+const POSTS_ENDPOINT = 'http://127.0.0.1:8000/api/posts/';
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -51,17 +52,37 @@ function ScrollTop(props) {
 }
 
 function App(props) {
-  const postObjs = [
-    {
-      id: 1,
-      title: 'Post 1',
-      content: 'Post 1 content',
-      location: 'Edmonton',
-      imageUrl:
-        'https://picsum.photos/200/300',
-      likes: 0,
-    },
-  ];
+  // const postObjs = [
+  //   {
+  //     id: 1,
+  //     title: 'Post 1',
+  //     content: 'Post 1 content',
+  //     location: 'Edmonton',
+  //     imageUrl:
+  //       'https://picsum.photos/200/300',
+  //     likes: 0,
+  //   },
+  // ];
+
+  const [postObjs, setPostObjs] = useState([]);
+
+  // No deps specified, so this will run on every render
+  useEffect(() => {
+    // TODO: Images may need more work
+    // GET request using fetch inside useEffect React hook
+    fetch(POSTS_ENDPOINT, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        setPostObjs(data);
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+  }, []);
 
 
   return (
@@ -88,17 +109,6 @@ function App(props) {
         </ScrollTop>
       </ThemeProvider>
     </React.Fragment>
-
-
-    // <div className="App">
-    //   <header className="App-header">
-    //     Header goes here
-    //   </header>
-
-    //   <footer>
-    //     Made by Fil, Hank, & John
-    //   </footer>
-    // </div>
   );
 }
 
