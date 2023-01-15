@@ -8,6 +8,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Fab from '@mui/material/Fab';
 
+
+const APP_NAME = 'Instaspam - Trip Poster';
 const POSTS_ENDPOINT = 'http://127.0.0.1:8000/api/posts/';
 const darkTheme = createTheme({
   palette: {
@@ -52,23 +54,9 @@ function ScrollTop(props) {
 }
 
 function App(props) {
-  // const postObjs = [
-  //   {
-  //     id: 1,
-  //     title: 'Post 1',
-  //     content: 'Post 1 content',
-  //     location: 'Edmonton',
-  //     image:
-  //       'https://picsum.photos/200/300',
-  //     likes: 0,
-  //   },
-  // ];
-
   const [postObjs, setPostObjs] = useState([]);
 
-  // No deps specified, so this will run on every render
-  useEffect(() => {
-    // TODO: Images may need more work
+  const fetchAllPosts = () => {
     // GET request using fetch inside useEffect React hook
     fetch(POSTS_ENDPOINT, {
       method: 'GET',
@@ -82,6 +70,11 @@ function App(props) {
       }).catch((error) => {
         console.error('Error:', error);
       });
+  };
+
+  // No deps specified, so this will run on every render
+  useEffect(() => {
+    fetchAllPosts();
   }, []);
 
 
@@ -91,12 +84,11 @@ function App(props) {
       <ThemeProvider theme={darkTheme}>
         <AppBar>
           <Toolbar>
-            <Typography variant="h6" component="div"> APP NAME </Typography>
+            <Typography variant="h6" component="div">{APP_NAME}</Typography>
           </Toolbar>
         </AppBar>
         <Toolbar id='#back-to-top-anchor' />
-        {/* Add a button that opens a popup that lets a user create a new post */}
-        <NewPostDialog></NewPostDialog>
+        <NewPostDialog endpoint={POSTS_ENDPOINT} onNewPost={fetchAllPosts} />
         <Container>
           {postObjs.map((postObj) => (
             <CardPost key={postObj.id} postObj={postObj} />
