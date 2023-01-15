@@ -14,9 +14,10 @@ export default function CardPost({ postObj }) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
-        sx={{ height: 140 }}
-        image={postObj.imageUrl}
+        component='div'
+        image={postObj.image}
         title={postObj.title}
+        sx={{ height: 140 }}
       />
       <CardContent>
         <Typography gutterBottom variant="h4" component="div">

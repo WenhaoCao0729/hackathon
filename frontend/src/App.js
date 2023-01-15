@@ -58,7 +58,7 @@ function App(props) {
   //     title: 'Post 1',
   //     content: 'Post 1 content',
   //     location: 'Edmonton',
-  //     imageUrl:
+  //     image:
   //       'https://picsum.photos/200/300',
   //     likes: 0,
   //   },
