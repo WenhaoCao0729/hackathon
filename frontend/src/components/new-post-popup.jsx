@@ -8,20 +8,21 @@ import { Add, Delete, Send, PhotoCamera, LocationOn } from '@mui/icons-material'
 
 const MAX_FIELD_LENGTH = 64;
 
-const NewPostDialog = (props) => {
+const NewPostDialog = ({ endpoint, onNewPost }) => {
   const [open, setOpen] = React.useState(false);
   const [postTitle, setPostTitle] = React.useState('');
   const [postLocation, setPostLocation] = React.useState('');
   const [postDesc, setPostDesc] = React.useState('');
-  const [imageName, setImageName] = React.useState('');
-  const [imageUrl, setImageUrl] = React.useState('');
+  const [postImageName, setPostImageName] = React.useState('');
+  const [postImageUrl, setPostImageUrl] = React.useState('');
+  const [postImageFile, setPostImageFile] = React.useState(null);
   const [isFormValid, setIsFormValid] = React.useState(false);
 
   // Create a a new state var that is true if all fields are valid
   // Triggered when any of the fields change
   useEffect(() => {
-    setIsFormValid(postTitle && postLocation && postDesc && imageUrl);
-  }, [postTitle, postLocation, postDesc, imageUrl]);
+    setIsFormValid(postTitle && postLocation && postDesc && postImageUrl);
+  }, [postTitle, postLocation, postDesc, postImageUrl]);
 
   const validateField = (value, successCallback, maxFieldLength = MAX_FIELD_LENGTH) => {
     if (value.length > maxFieldLength) {
@@ -41,8 +42,27 @@ const NewPostDialog = (props) => {
 
   const handleSubmit = () => {
     if (isFormValid) {
+      const formData = new FormData();
+
+      formData.append('title', postTitle);
+      formData.append('location', postLocation);
+      formData.append('content', postDesc);
+      formData.append('image', postImageFile);
+
+      fetch(endpoint, {
+        method: 'POST',
+        body: formData
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log('Success:', result);
+          onNewPost();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
       handleClose();
-      // TODO: Call endpoint to add post to database
     }
   };
 
@@ -60,18 +80,21 @@ const NewPostDialog = (props) => {
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    // console.debug(file);
     const reader = new FileReader();
+
     reader.onloadend = () => {
-      setImageName(file.name);
-      setImageUrl(reader.result);
+      setPostImageName(file.name);
+      setPostImageUrl(reader.result);
+      setPostImageFile(file);
     };
+
     reader.readAsDataURL(file);
   };
 
   const handleImageRemove = () => {
-    setImageName(null);
-    setImageUrl(null);
+    setPostImageName(null);
+    setPostImageUrl(null);
+    setPostImageFile(null);
   };
 
 
@@ -107,11 +130,11 @@ const NewPostDialog = (props) => {
                 Upload Image
                 <input hidden accept="image/*" type="file" onChange={handleImageUpload} />
               </Button>
-              {imageUrl && <ImageList cols={1} rowHeight={200}>
+              {postImageUrl && <ImageList cols={1} rowHeight={200}>
                 <ImageListItem>
-                  <img src={imageUrl} alt="Preview image" height="200" />
+                  <img src={postImageUrl} alt="Preview image" height="200" />
                   <ImageListItemBar
-                    title={imageName}
+                    title={postImageName}
                     actionIcon={
                       <IconButton aria-label="Remove image" onClick={handleImageRemove}>
                         <Delete />
