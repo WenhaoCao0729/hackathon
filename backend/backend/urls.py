@@ -24,11 +24,10 @@ from django.conf import settings
 
 router = routers.DefaultRouter()
 router.register(r'posts', views.PostViewSet,'posts')
-router.register(r'comments', views.CommentViewSet,'comments')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
 
-] 
-# + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

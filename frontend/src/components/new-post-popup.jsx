@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, Stack, TextField } from '@mui/material';
-import { Add, Send, PhotoCamera, LocationOn } from '@mui/icons-material';
+import {
+  Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  IconButton, ImageList, ImageListItem, ImageListItemBar, InputAdornment, Stack, TextField
+} from '@mui/material';
+import { Add, Delete, Send, PhotoCamera, LocationOn } from '@mui/icons-material';
 
 
 const MAX_FIELD_LENGTH = 64;
@@ -10,6 +13,8 @@ const NewPostDialog = (props) => {
   const [postTitle, setPostTitle] = React.useState('');
   const [postLocation, setPostLocation] = React.useState('');
   const [postDesc, setPostDesc] = React.useState('');
+  const [imageName, setImageName] = React.useState(null);
+  const [imageUrl, setImageUrl] = React.useState(null);
 
   const validateField = (value, successCallback, maxFieldLength = MAX_FIELD_LENGTH) => {
     if (value.length > maxFieldLength) {
@@ -48,6 +53,23 @@ const NewPostDialog = (props) => {
     validateField(event.target.value, setPostDesc, 256);
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    // console.debug(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageName(file.name);
+      setImageUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageRemove = () => {
+    setImageName(null);
+    setImageUrl(null);
+  };
+
+
   return (
     <div>
       <Button variant="contained" startIcon={<Add />} onClick={handleClickOpen}>
@@ -78,8 +100,20 @@ const NewPostDialog = (props) => {
               <TextField id="post-desc-field" label="Description" variant="outlined" multiline rows={4} value={postDesc} onChange={handleDescChange} error={!postDesc} />
               <Button variant="contained" component="label" startIcon={<PhotoCamera />}>
                 Upload Image
-                <input id="post-image-field" hidden accept="image/*" multiple type="file" />
+                <input hidden accept="image/*" type="file" onChange={handleImageUpload} />
               </Button>
+              {imageUrl && <ImageList cols={1} rowHeight={200}>
+                <ImageListItem>
+                  <img src={imageUrl} alt="Preview image" height="200" />
+                  <ImageListItemBar
+                    title={imageName}
+                    actionIcon={
+                      <IconButton aria-label="Remove image" onClick={handleImageRemove}>
+                        <Delete />
+                      </IconButton>
+                    } />
+                </ImageListItem>
+              </ImageList>}
             </Stack>
           </DialogContentText>
         </DialogContent>
