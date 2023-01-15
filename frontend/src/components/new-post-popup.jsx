@@ -1,10 +1,15 @@
 import * as React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, Stack, TextField } from '@mui/material';
-import { Add, Send, PhotoCamera, LocationOn } from '@mui/icons-material';
+import {
+  Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  IconButton, ImageList, ImageListItem, ImageListItemBar, InputAdornment, Stack, TextField
+} from '@mui/material';
+import { Add, Delete, Send, PhotoCamera, LocationOn } from '@mui/icons-material';
 
 
 const NewPostDialog = (props) => {
   const [open, setOpen] = React.useState(false);
+  const [imageName, setImageName] = React.useState(null);
+  const [imageUrl, setImageUrl] = React.useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -18,6 +23,23 @@ const NewPostDialog = (props) => {
     handleClose();
     // TODO: Call endpoint to add post to database
   };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    // console.debug(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageName(file.name);
+      setImageUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageRemove = () => {
+    setImageName(null);
+    setImageUrl(null);
+  };
+
 
   return (
     <div>
@@ -53,8 +75,20 @@ const NewPostDialog = (props) => {
               {/* TODO: Add component that lets How to upload images here */}
               <Button variant="contained" component="label" startIcon={<PhotoCamera />}>
                 Upload Image
-                <input hidden accept="image/*" multiple type="file" />
+                <input hidden accept="image/*" type="file" onChange={handleImageUpload} />
               </Button>
+              {imageUrl && <ImageList cols={1} rowHeight={200}>
+                <ImageListItem>
+                  <img src={imageUrl} alt="Preview image" height="200" />
+                  <ImageListItemBar
+                    title={imageName}
+                    actionIcon={
+                      <IconButton aria-label="Remove image" onClick={handleImageRemove}>
+                        <Delete />
+                      </IconButton>
+                    } />
+                </ImageListItem>
+              </ImageList>}
             </Stack>
           </DialogContentText>
         </DialogContent>
